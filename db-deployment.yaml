@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-server-deployment
+  labels:
+    app: db-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db-server
+  template:
+    metadata:
+      labels:
+        app: db-server
+    spec:
+      containers:
+        - name: mysql-container
+          image: mysql
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: mypassword
+            - name: MYSQL_DATABASE
+              value: mydb
+          volumeMounts:
+            - name: dbvolume
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: dbvolume
+          persistentVolumeClaim:
+            claimName: db-pv-claim
